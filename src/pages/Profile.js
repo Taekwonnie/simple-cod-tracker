@@ -8,7 +8,6 @@ import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
 import warzoneLogo from "../wz-logo.png";
-import { fontWeight } from "@mui/system";
 import { Grid } from "@material-ui/core/";
 import { useNavigate } from "react-router-dom";
 
