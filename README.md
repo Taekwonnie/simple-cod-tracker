@@ -1,3 +1,33 @@
+# Jayden Warzone Tracker
+
+### Jayden Warzone Tracker is a simple website that allows you to view your warzone lifetime statistics. The website currently supports player lookup on the following platforms: Activision, Xbox, PlayStation, and Blizzard.
+
+### Finish:
+
+- [x] Homepage
+
+- [x] Profile Page
+
+- [x] Fetch player lifestat stats
+
+- [x] Remember function
+
+### To do:
+
+- [ ] Recently searched player
+
+- [ ] Match History
+
+- [ ] Top players
+
+### Important requirement
+
+- The back-end express server must be launched in order for the front-end to correctly get player information.
+
+- Create and set the environment variable `REACT_APP_SV_URL` to the api url. Eg: `http://54.202.103.77:3001`
+
+- Follow the instruction for React App to start the project
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
