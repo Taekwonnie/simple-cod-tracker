@@ -13,10 +13,10 @@ import Paper from "@material-ui/core/Paper";
 import warzoneLogo from "./wz-logo.png";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import InputLabel from "@material-ui/core/InputLabel";
 import { useNavigate } from "react-router-dom";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import { useEffect, useState } from "react";
+const axios = require("axios");
 
 function Copyright() {
   return (
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(45),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -81,21 +81,43 @@ export default function SignIn() {
   const [selected, setNotSelected] = useState(false);
   const [checkBox, setCheckBox] = useState(false);
 
-  function searchButton(event) {
+  async function searchPlayer(name, platform) {
+    const url = `${process.env.REACT_APP_SV_URL}/api/cod/fullstat`;
+    try {
+      var response = await axios.post(url, { ID: name });
+      if (response) {
+        return {
+          data: response.data,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function searchButton(event) {
     localStorage.setItem("check", checkBox);
-    event.preventDefault();
     setNotSelected(false);
     if (platform === "" || !platform) {
       setNotSelected(true);
-      event.preventDefault();
+      //event.preventDefault();
     }
     if (checkBox) {
       localStorage.setItem("saveName", name);
       localStorage.setItem("savePlatform", platform);
     }
-    console.log(platform);
-    console.log(name);
-    console.log(checkBox);
+
+    const request = await searchPlayer(name, platform);
+    if (!request.length < 1) {
+      console.log("Can't find user");
+    }
+    console.log(request.data.Message);
+    if (request.data.Message === "Can't find user!") return;
+    else if (request.data.Message === "Success") {
+      navigate("./profile", {
+        state: request.data,
+      });
+    }
   }
 
   useEffect(() => {
@@ -155,10 +177,11 @@ export default function SignIn() {
               type="submit"
               fullWidth
               variant="contained"
-              color="primary"
+              color="white"
               className={classes.submit}
               onClick={(event) => {
                 searchButton(event);
+                event.preventDefault();
               }}
             >
               Search
