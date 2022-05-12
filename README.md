@@ -20,6 +20,12 @@
 
 - [ ] Top players
 
+### Image
+
+<kbd><img src='/readme_img/home.png'></img></kbd>
+
+<kbd><img src='/readme_img/profile.png'></img></kbd>
+
 ### Important requirement
 
 - The back-end express server must be launched in order for the front-end to correctly get player information.
