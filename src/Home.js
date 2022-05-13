@@ -14,8 +14,9 @@ import warzoneLogo from "./wz-logo.png";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useNavigate } from "react-router-dom";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import { useEffect, useState } from "react";
+import Alert from "@material-ui/lab/Alert";
+import { List, ListItem } from "@material-ui/core";
 const axios = require("axios");
 
 function Copyright() {
@@ -71,20 +72,32 @@ const useStyles = makeStyles((theme) => ({
   platformText: {
     textAlign: "center",
   },
+  alert: {
+    marginTop: "1em",
+  },
+  exampleBox: {
+    marginTop: "1em",
+    backgroundColor: "black",
+    opacity: "90%",
+    padding: "2em",
+  },
 }));
 
 export default function SignIn() {
   const classes = useStyles();
   const navigate = useNavigate();
   const [platform, setPlatform] = useState("");
-  const [name, setName] = useState("");
-  const [selected, setNotSelected] = useState(false);
+  const [name, setName] = useState("Nyxie#7848054");
+  const [error, setError] = useState("");
   const [checkBox, setCheckBox] = useState(false);
 
   async function searchPlayer(name, platform) {
     const url = `${process.env.REACT_APP_SV_URL}/api/cod/fullstat`;
     try {
-      var response = await axios.post(url, { ID: name });
+      var response = await axios.post(url, {
+        ID: name,
+        platform: platform,
+      });
       if (response) {
         return {
           data: response.data,
@@ -96,35 +109,32 @@ export default function SignIn() {
   }
 
   async function searchButton(event) {
-    localStorage.setItem("check", checkBox);
-    setNotSelected(false);
-    if (platform === "" || !platform) {
-      setNotSelected(true);
-      //event.preventDefault();
-    }
-    if (checkBox) {
-      localStorage.setItem("saveName", name);
-      localStorage.setItem("savePlatform", platform);
-    }
-
-    const request = await searchPlayer(name, platform);
-    if (!request.length < 1) {
-      console.log("Can't find user");
-    }
-    console.log(request.data.Message);
-    if (request.data.Message === "Can't find user!") return;
-    else if (request.data.Message === "Success") {
-      navigate("./profile", {
-        state: request.data,
-      });
+    localStorage.setItem("saveName", name);
+    localStorage.setItem("savePlatform", platform);
+    try {
+      const request = await searchPlayer(name, platform);
+      console.log(request.data.Message);
+      if (request.data.Message === "Success") {
+        navigate("./profile", {
+          state: request.data,
+        });
+      } else if (request.data === "Not permitted: user not found") {
+        setError("User not found!");
+      } else if (request.data === "Not permitted: not allowed") {
+        setError("User profile is private!");
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
   useEffect(() => {
-    const checkBoxState = localStorage.getItem("check");
-    setCheckBox(checkBoxState);
-    setName(localStorage.getItem("saveName"));
-    setPlatform(localStorage.getItem("savePlatform"));
+    if (localStorage.getItem("saveName")) {
+      setName(localStorage.getItem("saveName"));
+    }
+    if (localStorage.getItem("savePlatform")) {
+      setPlatform(localStorage.getItem("savePlatform"));
+    }
   }, []);
 
   return (
@@ -134,13 +144,21 @@ export default function SignIn() {
       <div className={classes.paper}>
         <Paper className={classes.paper2}>
           <img src={warzoneLogo} alt="Logo" className={classes.logo}></img>
+          {error && (
+            <Alert
+              variant="outlined"
+              severity="error"
+              className={classes.alert}
+            >
+              {error}
+            </Alert>
+          )}
           <form className={classes.form}>
             <Select
               value={platform}
               onChange={(e) => setPlatform(e.target.value)}
               className={classes.select}
-              placeholder={"Select Platform"}
-              defaultValue=""
+              displayEmpty
             >
               <MenuItem value="" disabled>
                 <em>Select Platform</em>
@@ -150,7 +168,6 @@ export default function SignIn() {
               <MenuItem value="psn">PSN</MenuItem>
               <MenuItem value="xbl">XBOX</MenuItem>
             </Select>
-            {selected && <FormHelperText>This is required!</FormHelperText>}
             <TextField
               variant="outlined"
               margin="normal"
@@ -161,23 +178,11 @@ export default function SignIn() {
               label="In game name"
               autoFocus
               textalign="center"
-              valu
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  value={checkBox}
-                  color="primary"
-                  onChange={(e) => setCheckBox(e.target.checked)}
-                />
-              }
-              label="Remember me"
             />
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              color="white"
               className={classes.submit}
               onClick={(event) => {
                 searchButton(event);
@@ -187,6 +192,17 @@ export default function SignIn() {
               Search
             </Button>
           </form>
+        </Paper>
+        <Paper className={classes.exampleBox}>
+          <Typography className={classes.platformText}>
+            Example Profile
+          </Typography>
+          <List sx={{ listStyleType: "disc" }}>
+            <ListItem>IGN: BoloTac#2479392 Platform: Activision </ListItem>
+            <ListItem>IGN: Caedrius#2813 Platform: Battlenet </ListItem>
+            <ListItem>IGN: chamusca_pmbc Platform: PSN </ListItem>
+            <ListItem>IGN: vreguiar Platform: XBOX </ListItem>
+          </List>
         </Paper>
       </div>
       <Box mt={8}>
