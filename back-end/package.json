@@ -1,0 +1,20 @@
+{
+  "name": "call-of-duty-api-express",
+  "version": "1.0.0",
+  "description": "A express server to handle fetching data for front-end",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "call-of-duty-api": "^3.1.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "helmet": "^5.0.2",
+    "morgan": "^1.10.0"
+  }
+}
